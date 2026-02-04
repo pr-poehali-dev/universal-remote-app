@@ -1,0 +1,19 @@
+{
+  "tests": [
+    {
+      "name": "Send IR command with valid device",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "device_id": 1,
+        "command": "power"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "device": "string",
+        "command": "power"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

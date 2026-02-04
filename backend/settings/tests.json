@@ -1,0 +1,26 @@
+{
+  "tests": [
+    {
+      "name": "Get all settings",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": {},
+      "bodyMatcher": "type"
+    },
+    {
+      "name": "Update settings",
+      "method": "PUT",
+      "path": "/",
+      "body": {
+        "ir_endpoint": "http://192.168.1.100:8080/send",
+        "auto_detect": "true"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "message": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

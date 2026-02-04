@@ -1,0 +1,35 @@
+{
+  "tests": [
+    {
+      "name": "Get all devices",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": [],
+      "bodyMatcher": "type"
+    },
+    {
+      "name": "Create new device",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "name": "Test TV",
+        "model": "TEST-123",
+        "type": "tv",
+        "brand": "TestBrand",
+        "ir_codes": {
+          "power": "0000",
+          "volume_up": "0001"
+        },
+        "status": "online"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": "number",
+        "name": "Test TV",
+        "type": "tv"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
