@@ -1,9 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
+import { toast } from '@/components/ui/use-toast';
+import { api } from '@/lib/api';
+import { useState } from 'react';
 
 interface RemoteControlProps {
   device: {
+    id: number;
     name: string;
     model: string;
     type: string;
@@ -12,8 +16,32 @@ interface RemoteControlProps {
 }
 
 const RemoteControl = ({ device }: RemoteControlProps) => {
-  const handleButtonPress = (action: string) => {
-    console.log(`Pressed: ${action}`);
+  const [sending, setSending] = useState(false);
+
+  const handleButtonPress = async (command: string) => {
+    if (sending) return;
+    
+    setSending(true);
+    try {
+      const result = await api.sendCommand(device.id, command);
+      
+      if (result.success) {
+        toast({
+          title: '✓ Команда отправлена',
+          description: `ИК-код: ${result.ir_code}`,
+          duration: 2000
+        });
+      }
+    } catch (error) {
+      toast({
+        title: '✗ Ошибка отправки',
+        description: 'Не удалось отправить команду',
+        variant: 'destructive',
+        duration: 3000
+      });
+    } finally {
+      setSending(false);
+    }
   };
 
   return (

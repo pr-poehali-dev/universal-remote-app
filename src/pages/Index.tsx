@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -9,15 +9,28 @@ import DeviceList from '@/components/DeviceList';
 import GroupsPanel from '@/components/GroupsPanel';
 import HistoryPanel from '@/components/HistoryPanel';
 import SettingsPanel from '@/components/SettingsPanel';
+import { api, type Device } from '@/lib/api';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('remote');
-  const [selectedDevice, setSelectedDevice] = useState({
-    name: 'Telefunken TV',
-    model: 'TF-LED32S52T2S',
-    type: 'tv',
-    status: 'online'
-  });
+  const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
+  const [devices, setDevices] = useState<Device[]>([]);
+
+  useEffect(() => {
+    loadDevices();
+  }, []);
+
+  const loadDevices = async () => {
+    try {
+      const devicesData = await api.getDevices();
+      setDevices(devicesData);
+      if (devicesData.length > 0 && !selectedDevice) {
+        setSelectedDevice(devicesData[0]);
+      }
+    } catch (error) {
+      console.error('Failed to load devices:', error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -35,7 +48,7 @@ const Index = () => {
             </div>
             <Badge variant="outline" className="bg-primary/10 border-primary/30 text-primary">
               <div className="w-2 h-2 rounded-full bg-primary mr-2 animate-pulse-glow" />
-              Готов
+              {devices.length} устройств
             </Badge>
           </div>
         </div>
@@ -43,7 +56,7 @@ const Index = () => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="container mx-auto px-4 py-6">
-          {activeTab === 'remote' && (
+          {activeTab === 'remote' && selectedDevice && (
             <Card className="mb-4 p-4 bg-card/50 border-border">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -63,11 +76,25 @@ const Index = () => {
           )}
 
           <TabsContent value="remote" className="mt-0">
-            <RemoteControl device={selectedDevice} />
+            {selectedDevice ? (
+              <RemoteControl device={selectedDevice} />
+            ) : (
+              <Card className="p-8 text-center">
+                <Icon name="Radio" size={48} className="mx-auto text-muted-foreground mb-4" />
+                <p className="text-muted-foreground">Выберите устройство</p>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="devices" className="mt-0">
-            <DeviceList onSelectDevice={setSelectedDevice} />
+            <DeviceList 
+              devices={devices} 
+              onSelectDevice={(device) => {
+                setSelectedDevice(device);
+                setActiveTab('remote');
+              }} 
+              onRefresh={loadDevices}
+            />
           </TabsContent>
 
           <TabsContent value="groups" className="mt-0">

@@ -1,0 +1,39 @@
+{
+  "tests": [
+    {
+      "name": "Get all devices",
+      "method": "GET",
+      "path": "/?action=devices",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "devices": "array"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Send IR command",
+      "method": "POST",
+      "path": "/?action=command",
+      "body": {
+        "device_id": 1,
+        "command": "power"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true,
+        "ir_code": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Get command history",
+      "method": "GET",
+      "path": "/?action=history",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "history": "array"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
