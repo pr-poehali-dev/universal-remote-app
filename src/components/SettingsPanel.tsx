@@ -9,6 +9,7 @@ import { toast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import CustomizeRemote from '@/components/CustomizeRemote';
 import AddDeviceDialog from '@/components/AddDeviceDialog';
+import LearnModeDialog from '@/components/LearnModeDialog';
 import { api, type Device } from '@/lib/api';
 
 const SettingsPanel = () => {
@@ -18,6 +19,8 @@ const SettingsPanel = () => {
   const [irEndpoint, setIrEndpoint] = useState('');
   const [showCustomize, setShowCustomize] = useState(false);
   const [showAddDevice, setShowAddDevice] = useState(false);
+  const [showLearnMode, setShowLearnMode] = useState(false);
+  const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
   const [devices, setDevices] = useState<Device[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -107,6 +110,17 @@ const SettingsPanel = () => {
       description: 'Новое устройство успешно добавлено',
       duration: 2000
     });
+  };
+
+  const handleLearnDevice = (device: Device) => {
+    setSelectedDevice(device);
+    setShowLearnMode(true);
+  };
+
+  const handleLearnComplete = () => {
+    loadDevices();
+    setShowLearnMode(false);
+    setSelectedDevice(null);
   };
 
   return (
@@ -203,14 +217,25 @@ const SettingsPanel = () => {
                     </p>
                   </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleDeleteDevice(device.id)}
-                  className="touch-feedback"
-                >
-                  <Icon name="Trash2" size={16} className="text-destructive" />
-                </Button>
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleLearnDevice(device)}
+                    className="touch-feedback"
+                    title="Обучить пульт"
+                  >
+                    <Icon name="Radio" size={16} className="text-primary" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDeleteDevice(device.id)}
+                    className="touch-feedback"
+                  >
+                    <Icon name="Trash2" size={16} className="text-destructive" />
+                  </Button>
+                </div>
               </div>
             ))}
           </div>
@@ -302,6 +327,15 @@ const SettingsPanel = () => {
         onOpenChange={setShowAddDevice}
         onDeviceAdded={handleDeviceAdded}
       />
+
+      {selectedDevice && (
+        <LearnModeDialog
+          open={showLearnMode}
+          onOpenChange={setShowLearnMode}
+          device={selectedDevice}
+          onComplete={handleLearnComplete}
+        />
+      )}
 
       <Card className="p-4 bg-card border-border hover:border-primary/50 transition-colors cursor-pointer touch-feedback">
         <div className="flex items-center justify-between">

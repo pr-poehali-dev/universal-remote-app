@@ -1,0 +1,34 @@
+{
+  "tests": [
+    {
+      "name": "Learn IR code for power button",
+      "method": "POST",
+      "body": {
+        "device_id": 1,
+        "button": "power",
+        "ir_code": "NEC:0x20DF10EF"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true,
+        "message": "string",
+        "button": "power",
+        "ir_code": "NEC:0x20DF10EF"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Learn IR code without device_id",
+      "method": "POST",
+      "body": {
+        "button": "power",
+        "ir_code": "NEC:0x20DF10EF"
+      },
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

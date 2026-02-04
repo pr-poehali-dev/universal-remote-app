@@ -2,6 +2,7 @@ const DEVICES_API = 'https://functions.poehali.dev/e9f095cf-2ce9-4b91-9f39-1da72
 const IR_SEND_API = 'https://functions.poehali.dev/63e96d5e-48e5-4cbc-959b-f396cd43bdfc';
 const SETTINGS_API = 'https://functions.poehali.dev/ec060a5a-e560-4168-b4b1-637a4a18176a';
 const HISTORY_API = 'https://functions.poehali.dev/ff6f0a9e-5999-4e2f-a96d-44e6226ff5a2';
+const IR_LEARN_API = 'https://functions.poehali.dev/7e3f1856-8985-41dd-a9f8-a381cd87af01';
 
 export interface Device {
   id: number;
@@ -101,6 +102,15 @@ export const api = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(device)
+    });
+    return response.json();
+  },
+
+  async learnIRCode(deviceId: number, button: string, irCode: string): Promise<{ success: boolean; message: string }> {
+    const response = await fetch(IR_LEARN_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ device_id: deviceId, button, ir_code: irCode })
     });
     return response.json();
   }
